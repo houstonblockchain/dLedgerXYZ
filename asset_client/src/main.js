@@ -14,27 +14,33 @@
  * limitations under the License.
  * ----------------------------------------------------------------------------
  */
-'use strict'
+'use strict';
 
 // These requires inform webpack which styles to build
-require('bootstrap')
-require('../styles/main.scss')
+require('bootstrap');
+require('../styles/main.scss');
 
-const m = require('mithril')
+const m = require('mithril');
 
-const api = require('./services/api')
-const transactions = require('./services/transactions')
-const navigation = require('./components/navigation')
+const api = require('./services/api');
+const transactions = require('./services/transactions');
+const navigation = require('./components/navigation');
 
-const AddAssetForm = require('./views/add_asset_form')
-const AgentDetailPage = require('./views/agent_detail')
-const AgentList = require('./views/list_agents')
-const AssetList = require('./views/list_assets')
-const AssetDetail = require('./views/asset_detail')
-const Dashboard = require('./views/dashboard')
-const LoginForm = require('./views/login_form')
-const PropertyDetailPage = require('./views/property_detail')
-const SignupForm = require('./views/signup_form')
+const AddAssetForm = require('./views/add_asset_form');
+const AddFacilityForm = require('./views/add_facility_form');
+const AddItemForm = require('./views/add_item');
+const AgentDetailPage = require('./views/agent_detail');
+const AgentList = require('./views/list_agents');
+const AssetList = require('./views/list_assets');
+const AssetDetail = require('./views/asset_detail');
+const Dashboard = require('./views/dashboard');
+const FacilityDetail = require('./views/facility_detail');
+const FacilityList = require('./views/list_facilities');
+const ItemDetail = require('./views/item_detail');
+const ItemList = require('./views/list_items');
+const LoginForm = require('./views/login_form');
+const PropertyDetailPage = require('./views/property_detail');
+const SignupForm = require('./views/signup_form');
 
 /**
  * A basic layout component that adds the navbar to the view.
@@ -51,9 +57,13 @@ const Layout = {
 const loggedInNav = () => {
   const links = [
     ['/create', 'Add Asset'],
+    ['/addFacility', 'Add Facility'],
+    ['/addItem', 'Add Item'],
     ['/assets', 'View Assets'],
+    ['/facilities', 'View Facilities'],
+    ['/items', 'View Items'],
     ['/agents', 'View Agents']
-  ]
+  ];
   return m(navigation.Navbar, {}, [
     navigation.links(links),
     navigation.link('/profile', 'Profile'),
@@ -82,26 +92,26 @@ const resolve = (view, restricted = false) => {
     resolver.onmatch = () => {
       if (api.getAuth()) return view
       m.route.set('/login')
-    }
+    };
   }
 
   resolver.render = vnode => {
     if (api.getAuth()) {
-      return m(Layout, { navbar: loggedInNav() }, m(view, vnode.attrs))
+      return m(Layout, { navbar: loggedInNav() }, m(view, vnode.attrs));
     }
-    return m(Layout, { navbar: loggedOutNav() }, m(view, vnode.attrs))
-  }
+    return m(Layout, { navbar: loggedOutNav() }, m(view, vnode.attrs));
+  };
 
-  return resolver
-}
+  return resolver;
+};
 
 /**
  * Clears user info from memory/storage and redirects.
  */
 const logout = () => {
-  api.clearAuth()
-  transactions.clearPrivateKey()
-  m.route.set('/')
+  api.clearAuth();
+  transactions.clearPrivateKey();
+  m.route.set('/');
 }
 
 /**
@@ -122,12 +132,20 @@ document.addEventListener('DOMContentLoaded', () => {
     '/agents/:publicKey': resolve(AgentDetailPage),
     '/agents': resolve(AgentList),
     '/create': resolve(AddAssetForm, true),
-    '/assets/:recordId': resolve(AssetDetail),
     '/assets': resolve(AssetList),
+    '/assets/:recordId': resolve(AssetDetail),
+    '/assets/:recordId/:name': resolve(PropertyDetailPage),
+    '/addFacility': resolve(AddFacilityForm, true),
+    '/facilities': resolve(FacilityList),
+    '/facilities/:recordId': resolve(FacilityDetail),
+    '/facilities/:recordId/:name': resolve(PropertyDetailPage), //TODO Might need seperate property detail page for facility
+    '/addItem': resolve(AddItemForm, true),
+    '/items': resolve(ItemList),
+    '/items/:recordId': resolve(ItemDetail),
+    '/items/:recordId/:name': resolve(PropertyDetailPage), //TODO Might need seperate property detail page for facility
     '/login': resolve(LoginForm),
     '/logout': { onmatch: logout },
     '/profile': { onmatch: profile },
-    '/assets/:recordId/:name': resolve(PropertyDetailPage),
     '/signup': resolve(SignupForm)
   })
 })

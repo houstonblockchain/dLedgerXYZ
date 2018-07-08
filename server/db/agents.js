@@ -100,23 +100,28 @@ const fetchQuery = (publicKey, auth) => block => {
           auth,
           agent.merge(
             fetchUser(publicKey)),
-          agent)
-      })
-}
+          agent);
+      });
+};
 
 const fetchUser = publicKey => {
   return r.table('users')
     .filter(hasPublicKey(publicKey))
-    .pluck('username', 'email', 'encryptedKey')
-    .nth(0)
-}
+    .pluck('username', 'email',"lastName",  "phoneNumber",
+    "street", "unitNumber", "city",
+    "stateAddress", "zipCode", "facilityName",
+    "title", "permissions", "hireDate",
+    "endDate", "isOwner", "isAdmin",
+    "image", "uid",  'encryptedKey')
+    .nth(0);
+};
 
-const list = filterQuery => db.queryWithCurrentBlock(listQuery(filterQuery))
+const list = filterQuery => db.queryWithCurrentBlock(listQuery(filterQuery));
 
 const fetch = (publicKey, auth) =>
-      db.queryWithCurrentBlock(fetchQuery(publicKey, auth))
+      db.queryWithCurrentBlock(fetchQuery(publicKey, auth));
 
 module.exports = {
   list,
   fetch
-}
+};

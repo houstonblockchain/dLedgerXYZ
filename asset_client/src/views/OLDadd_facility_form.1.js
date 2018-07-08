@@ -144,13 +144,35 @@ const AddFacilityForm = {
             required: true
           })),
           // address is editable field
-          forms.group('Address', forms.field(setter('address'),{
+          forms.group('Address',
+          [
+            forms.field(setter('streetAddress'), {
             type: 'text',
             required: true,
-            placeholder: 'Eg: 1046 Fedora St. Los Angeles, CA 90006'
-          })
-
-          ),
+            placeholder: 'Street address'
+            }),
+            forms.field(setter('unitNumber'), {
+            type: 'text',
+            required: false,
+            placeholder: "Unit, Suite, etc"
+            }),
+            forms.field(setter('city'), {
+            type: 'text',
+            required: true,
+            placeholder: "City"
+            }),
+            forms.field(setter('states'), {
+            type: 'text',
+            required: true,
+            placeholder: "State"
+            }),
+            forms.field(setter('zipCode'), {
+            type: 'text',
+            required: true,
+            placeholder: "Zip code"
+            })
+          ]
+        ),
           // owner is transfered to license owner
           forms.group('Owner', forms.field(setter('owner'), {
             type: 'text',
@@ -245,6 +267,29 @@ const _updateReporters = (vnode, reporterIndex) => {
   }
 }
 
+
+/**Remove ';' character from string
+ * 
+ * Return cleaned string
+ * 
+ * Appends ';....' character to the end of string  for delimiting
+*/
+function cleanAndAppend(stringer) {
+	
+	return stringer.split(';').join('') + ';....';
+}
+
+/**
+ * Combine addressFields into one string for storage
+ */
+
+function addressToString(strt, unitN, cty, sts, zipC) {
+
+	return (cleanAndAppend(strt) + cleanAndAppend(unitN) + cleanAndAppend(cty) + cleanAndAppend(sts) + cleanAndAppend(zipC));
+
+}
+
+
 /**
  * Handle the form submission.
  *
@@ -258,13 +303,17 @@ const _handleSubmit = (signingKey, state) => {
   }]
   
   //Concatenate addressFields and save as single string
-  if (state.address){
-    properties.push({
-      name: 'address',
-      stringValue: state.address,
-      dataType: payloads.createRecord.enum.STRING
-    })
-  }
+  properties.push({
+    name: 'address',
+    stringValue: addressToString(
+      state.streetAddress, 
+      state.unitNumber,
+      state.city,
+      state.states,
+      state.zipCode
+      ),
+    dataType: payloads.createRecord.enum.STRING
+  })
 
   if (state.licenseStatus) {
     properties.push({
@@ -402,7 +451,7 @@ const _handleSubmit = (signingKey, state) => {
     }))
 
   transactions.submit([recordPayload].concat(reporterPayloads), true)
-    .then(() => m.route.set(`/facilities/${state.licenseNumber}`))
+    .then(() => m.route.set(`/facility/${state.licenseNumber}`))
 }
 
 module.exports = AddFacilityForm

@@ -14,12 +14,14 @@
  * limitations under the License.
  * ----------------------------------------------------------------------------
  */
-'use strict'
+'use strict';
 
-const m = require('mithril')
-const _ = require('lodash')
+const m = require('mithril');
+const _ = require('lodash');
+const mSelect = require('mithril-select');
 
-const layout = require('./layout')
+
+const layout = require('./layout');
 
 /**
  * Returns a labeled form group
@@ -28,8 +30,8 @@ const group = (label, ...contents) => {
   return m('.form-group', [
     m('label', label),
     contents
-  ])
-}
+  ]);
+};
 
 /**
  * Returns a bare input field suitable for use in a form group.
@@ -44,29 +46,63 @@ const field = (onValue, attrs = null) => {
   return m('input.form-control.mb-1', _.assign(defaults, attrs))
 }
 
+
+/**
+ * Convenience function for returning partial onValue functions
+ */
+const stateSetter = state => key => value => { state[key] = value; };
+const setter = (state, key, value) => stateSetter(state)(key)(value);
+
+
+const dropDownField = (onValue, dropDownValues, viewText, attrs = null) => {
+  //let dropDownList = [];
+  let texts = dropDownValues[0].text;
+  let ids = dropDownValues[0].id;
+  const defaults = {
+    required: true,
+    oninput: m.withAttr('value', onValue),
+    onclick: m.withAttr('value', dropDownList.selected)
+  }
+
+  return [
+    m('input.form-control.mb-1', _.assign(defaults, attrs)),
+    m(mSelect, {
+      options: [
+        { value: '', view: viewText }
+      ].concat(dropDownList.map(c => ({ value: c.id, view: c.text }))
+      ),
+      onchange: (val) => {
+        onValue = !!val
+          ? dropDownValues.find(c => c.id === val).text
+          : '';
+      }
+    }
+    )
+  ]
+}
+
 /**
  * Returns a labeled input field which passes its value to a callback
  */
-const input = (type, onValue, label, required = true) => {
+const input = (type, onValue, label, required) => {
   return group(label, field(onValue, { type, required }))
 }
 
-const textInput = _.partial(input, 'text')
-const passwordInput = _.partial(input, 'password')
-const numberInput = _.partial(input, 'number')
-const emailInput = _.partial(input, 'email')
+const textInput = _.partial(input, 'text');
+const passwordInput = _.partial(input, 'password');
+const numberInput = _.partial(input, 'number');
+const emailInput = _.partial(input, 'email');
+const dateInput = _.partial(input, 'date');
+const phoneInput = _.partial(input, 'tel');
+
 
 /**
  * Creates an icon with an onclick function
  */
 const clickIcon = (name, onclick) => {
-  return m('span.mx-3', { onclick }, layout.icon(name))
-}
+  return m('span.mx-3', { onclick }, layout.icon(name));
+};
 
-/**
- * Convenience function for returning partial onValue functions
- */
-const stateSetter = state => key => value => { state[key] = value }
 
 /**
  * Event listener which will set HTML5 validation on the triggered element
@@ -103,24 +139,29 @@ const MultiSelect = {
   view (vnode) {
     let handleChange = vnode.attrs.onchange || (() => null)
     let selected = vnode.attrs.selected
-    let color = vnode.attrs.color || 'light'
+    let color = vnode.attrs.color || 'light';
     return [
       m('.dropdown',
         m(`button.btn.btn-${color}.btn-block.dropdown-toggle.text-left`,
           {
             'data-toggle': 'dropdown',
+            onclick: (e) => {
+              e.preventDefault();
+              vnode.state.show = !vnode.state.show;
+            },
+            onblur: e => { vnode.state.show = false; }
           }, vnode.attrs.label),
-        m('.dropdown-menu.w-100',
+        m('.dropdown-menu.w-100', {className: vnode.state.show ? 'show' : ''},
           m("a.dropdown-item[href='#']", {
             onclick: (e) => {
-              e.preventDefault()
-              handleChange(vnode.attrs.options.map(([value, label]) => value))
+              e.preventDefault();
+              handleChange(vnode.attrs.options.map(([value, label]) => value));
             }
           }, 'Select All'),
           m("a.dropdown-item[href='#']", {
             onclick: (e) => {
-              e.preventDefault()
-              handleChange([])
+              e.preventDefault();
+              handleChange([]);
             }
           }, 'Deselect All'),
           m('.dropdown-divider'),
@@ -128,27 +169,29 @@ const MultiSelect = {
             ([value, label]) =>
              m("a.dropdown-item[href='#']", {
                onclick: (e) => {
-                 e.preventDefault()
+                 e.preventDefault();
 
-                 let setLocation = selected.indexOf(value)
+                 let setLocation = selected.indexOf(value);
                  if (setLocation >= 0) {
-                   selected.splice(setLocation, 1)
+                   selected.splice(setLocation, 1);
                  } else {
-                   selected.push(value)
+                   selected.push(value);
                  }
 
-                 handleChange(selected)
+                 handleChange(selected);
                }
              }, label, (selected.indexOf(value) > -1 ? ' \u2714' : '')))))
-    ]
+    ];
   }
-}
+};
 
 module.exports = {
   group,
   field,
   input,
   textInput,
+  dateInput,
+  phoneInput,
   passwordInput,
   numberInput,
   emailInput,
@@ -157,4 +200,4 @@ module.exports = {
   validator,
   triggerDownload,
   MultiSelect
-}
+};

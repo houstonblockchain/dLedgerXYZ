@@ -14,16 +14,23 @@
  * limitations under the License.
  * ----------------------------------------------------------------------------
  */
+
+/**
+ * Used for testing property details
+ */
+
+
+
 'use strict'
 
 const m = require('mithril')
 const _ = require('lodash')
 
-const api = require('../services/api')
-const payloads = require('../services/payloads')
-const parsing = require('../services/parsing')
-const transactions = require('../services/transactions')
-const layout = require('../components/layout')
+const api = require('../services/api') // for setters, getters, and authorization related processing
+const payloads = require('../services/payloads') // for transaction actions eg, createRecord, updateRecord, etc
+const parsing = require('../services/parsing') // for data manipulation
+const transactions = require('../services/transactions') // for submit authorizations and PKI checkers, setters, etc
+const layout = require('../components/layout') // rows, rows, icons helpers
 const { LineGraphWidget, MapWidget } = require('../components/data')
 const { Table, PagingButtons } = require('../components/tables')
 
@@ -90,6 +97,14 @@ const typedInput = state => {
       })
     ])
   }
+  if (state.property.name === 'address') {
+    return m('.col-md-8', [
+      m('input.form-control', {
+        placeholder: 'Enter New Addrs..eg 295 Jordan st, #23, Score City CA, 99045',
+        oninput: withIntVal(value => { state.update = value })
+      })
+    ])
+  }
 
   if (state.property.dataType === 'LOCATION') {
     return [
@@ -105,7 +120,7 @@ const typedInput = state => {
         }))
     ]
   }
-
+  
   return m('.col-md-8', [
     m('input.form-control', {
       placeholder: 'Enter New Value...',

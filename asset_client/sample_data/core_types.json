@@ -2,34 +2,236 @@
   {
     "name": "asset",
     "properties": [
-        {
-          "name": "type",
-          "dataType": 4,
-          "required": true
-        },
-        {
-          "name": "subtype",
-          "dataType": 4
-        },
-        {
-          "name": "weight",
-          "dataType": 3,
-          "numberExponent": -6
-        },
-        {
-          "name": "location",
-          "dataType": 7
-        },
-        {
-          "name": "temperature",
-          "dataType": 3,
-          "numberExponent": -6
-        },
-        {
-          "name": "shock",
-          "dataType": 3,
-          "numberExponent": -6
-        }
+      {
+        "name": "type",
+        "dataType": 4,
+        "required": true
+      },
+      {
+        "name": "subtype",
+        "dataType": 4
+      },
+      {
+        "name": "weight",
+        "dataType": 3,
+        "numberExponent": -6
+      },
+      {
+        "name": "location",
+        "dataType": 7
+      },
+      {
+        "name": "temperature",
+        "dataType": 3,
+        "numberExponent": -6
+      },
+      {
+        "name": "shock",
+        "dataType": 3,
+        "numberExponent": -6
+      }
+    ]
+  },
+  {
+    "name": "facility",
+    "properties": [
+      {
+        "name": "licenseType",
+        "dataType": 4,
+        "required": true
+      },
+      {
+        "name": "licenseCategory",
+        "dataType": 4,
+        "required": true
+      },
+      {
+        "name": "legalName",
+        "dataType": 4,
+        "required": true
+      },
+      {
+        "name": "licenseStatus",
+        "dataType": 4,
+        "required": true
+      },
+      {
+        "name": "licenseExpiration",
+        "dataType": 4,
+        "required": true
+      },
+      {
+        "name": "dba",
+        "dataType": 4,
+        "required": false
+      },
+      {
+        "name": "facilityName",
+        "dataType": 4,
+        "required": false
+      },
+      {
+        "name": "profileImage",
+        "dataType": 4,
+        "required": false
+      },
+      {
+        "name": "email",
+        "dataType": 4,
+        "required": true
+      },
+      {
+        "name": "phoneNumber",
+        "dataType": 4,
+        "required": true
+      },
+      {
+        "name": "address",
+        "dataType": 4,
+        "required": true
+      },
+      {
+        "name": "mailingAddress",
+        "dataType": 4,
+        "required": false
+      },
+      {
+        "name": "owner",
+        "dataType": 4,
+        "required": true
+      },
+      {
+        "name": "admin",
+        "dataType": 4,
+        "required": true
+      },
+      {
+        "name": "uids",
+        "dataType": 4,
+        "required": false
+      },
+      {
+        "name": "lotUids",
+        "dataType": 4,
+        "required": false
+      },
+      {
+        "name": "plantIDs",
+        "dataType": 4,
+        "required": false
+      },
+      {
+        "name": "harvestBatchNames",
+        "dataType": 4,
+        "required": false
+      },
+      {
+        "name": "packageIDs",
+        "dataType": 4,
+        "required": false
+      },
+      {
+        "name": "titles",
+        "dataType": 4,
+        "required": false
+      },
+      {
+        "name": "strains",
+        "dataType": 4,
+        "required": false
+      },
+      {
+        "name": "items",
+        "dataType": 4,
+        "required": false
+      },
+      {
+        "name": "rooms",
+        "dataType": 4,
+        "required": false
+      },
+      {
+        "name": "patients",
+        "dataType": 4,
+        "required": false
+      },
+      {
+        "name": "employees",
+        "dataType": 4,
+        "required": false
+      }
+    ]
+  },
+  {
+    "name": "strain",
+    "properties": [
+      {
+        "name": "testingStatus",
+        "dataType": 4,
+        "required": true
+      },
+      {
+        "name": "thcInput",
+        "dataType": 3,
+        "numberExponent": -4,
+        "required": false
+      },
+      {
+        "name": "cbdInput",
+        "dataType": 3,
+        "numberExponent": -4,
+        "required": false
+      },
+      {
+        "name": "indicaInput",
+        "dataType": 3,
+        "numberExponent": -4,
+        "required": false
+      },
+      {
+        "name": "sativaInput",
+        "dataType": 3,
+        "numberExponent": -4,
+        "required": false
+      },
+      {
+        "name": "rodellisInput",
+        "dataType": 3,
+        "numberExponent": -4,
+        "required": false
+      }
+    ]
+  },
+  {
+    "name": "item",
+    "properties": [
+
+      {
+        "name": "itemName",
+        "dataType": 4,
+        "required": true
+      },
+      {
+        "name": "itemType",
+        "dataType": 4,
+        "required": true
+      },
+      {
+        "name": "quantity",
+        "dataType": 3,
+        "numberExponent": -4,
+        "required": true
+      },
+      {
+        "name": "unitOfMeasure",
+        "dataType": 4,
+        "required": true
+      },
+      {
+        "name": "itemCategory",
+        "dataType": 4,
+        "required": true
+      }
     ]
   }
 ]

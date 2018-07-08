@@ -21,10 +21,18 @@ const moment = require('moment')
 const { FLOAT_PRECISION } = require('./payloads')
 
 const STRINGIFIERS = {
-  LOCATION: v => `${v.latitude}, ${v.longitude}`,
-  weight: v => `${v}kg`,
-  temperature: v => `${v} °C`,
-  shock: v => `${v}g`,
+  legalName: v => `${v}`,
+  dba: v => `${v}`,
+  licenseStatus: v => `${v}`,
+  licenseEmail: v => `${v}`,
+  licensePhoneNumber: v => `${v}`,
+  licenseAddress: v => `${v}`,
+  uids: v => `${v}`,
+  titles: v => `${v}`,
+  strains: v => `${v}`,
+  items: v => `${v}`,
+  rooms: v => `${v}`,
+  patients: v => `${v}`,
   '*': v => JSON.stringify(v, null, 1).replace(/[{}"]/g, '')
 }
 
@@ -59,19 +67,31 @@ const floatifyValue = value => {
 }
 
 /**
+ * 
+ * @param {*Stringer to parse to array} stringer 
+ * @param {*delimitter to mark slice points} delimitter 
+ * @param {*Return arrary} delimitter 
+ */
+function stringToArray(stringer, delimitter) {
+	
+	return stringer.split(delimitter).join(', ');
+}
+
+/**
  * Parses seconds into a date/time string
  */
 const formatTimestamp = sec => {
   if (!sec) {
     sec = Date.now() / 1000
   }
-  return moment.unix(sec).format('MM/DD/YYYY, h:mm:ss a')
-}
+  return moment.unix(sec).format('MM/DD/YYYY, h:mm:ss a');
+};
 
 module.exports = {
   toInt,
   toFloat,
   stringifyValue,
   floatifyValue,
-  formatTimestamp
-}
+  formatTimestamp,
+  stringToArray
+};
