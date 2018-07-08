@@ -150,7 +150,7 @@ impl<'a> SupplyChainState<'a> {
 
     pub fn get_record(&mut self, record_id: &str) -> Result<Option<record::Record>, ApplyError> {
         let address = make_record_address(record_id);
-        let d = self.context.get_state(&address)?;
+        let d = self.context.get_state(vec![address])?;
         match d {
             Some(packed) => {
                 let records: record::RecordContainer =
@@ -180,7 +180,7 @@ impl<'a> SupplyChainState<'a> {
         record: record::Record,
     ) -> Result<(), ApplyError> {
         let address = make_record_address(record_id);
-        let d = self.context.get_state(&address)?;
+        let d = self.context.get_state(vec![address.clone()])?;
         let mut record_container = match d {
             Some(packed) => match protobuf::parse_from_bytes(packed.as_slice()) {
                 Ok(records) => records,
@@ -222,8 +222,10 @@ impl<'a> SupplyChainState<'a> {
                 )))
             }
         };
+        let mut sets = HashMap::new();
+        sets.insert(address, serialized);
         self.context
-            .set_state(&address, serialized.as_ref())
+            .set_state(sets)
             .map_err(|err| ApplyError::InternalError(format!("{}", err)))?;
         Ok(())
     }
@@ -233,7 +235,7 @@ impl<'a> SupplyChainState<'a> {
         type_name: &str,
     ) -> Result<Option<record::RecordType>, ApplyError> {
         let address = make_record_type_address(type_name);
-        let d = self.context.get_state(&address)?;
+        let d = self.context.get_state(vec![address])?;
         match d {
             Some(packed) => {
                 let record_types: record::RecordTypeContainer =
@@ -263,7 +265,7 @@ impl<'a> SupplyChainState<'a> {
         record_type: record::RecordType,
     ) -> Result<(), ApplyError> {
         let address = make_record_type_address(type_name);
-        let d = self.context.get_state(&address)?;
+        let d = self.context.get_state(vec![address.clone()])?;
         let mut record_types = match d {
             Some(packed) => match protobuf::parse_from_bytes(packed.as_slice()) {
                 Ok(record_types) => record_types,
@@ -286,15 +288,17 @@ impl<'a> SupplyChainState<'a> {
                 )))
             }
         };
+        let mut sets = HashMap::new();
+        sets.insert(address, serialized);
         self.context
-            .set_state(&address, serialized.as_ref())
+            .set_state(sets)
             .map_err(|err| ApplyError::InternalError(format!("{}", err)))?;
         Ok(())
     }
 
     pub fn get_agent(&mut self, agent_id: &str) -> Result<Option<agent::Agent>, ApplyError> {
         let address = make_agent_address(agent_id);
-        let d = self.context.get_state(&address)?;
+        let d = self.context.get_state(vec![address])?;
         match d {
             Some(packed) => {
                 let agents: agent::AgentContainer =
@@ -320,7 +324,7 @@ impl<'a> SupplyChainState<'a> {
 
     pub fn set_agent(&mut self, agent_id: &str, agent: agent::Agent) -> Result<(), ApplyError> {
         let address = make_agent_address(agent_id);
-        let d = self.context.get_state(&address)?;
+        let d = self.context.get_state(vec![address.clone()])?;
         let mut agents = match d {
             Some(packed) => match protobuf::parse_from_bytes(packed.as_slice()) {
                 Ok(agents) => agents,
@@ -343,8 +347,10 @@ impl<'a> SupplyChainState<'a> {
                 )))
             }
         };
+        let mut sets = HashMap::new();
+        sets.insert(address, serialized);
         self.context
-            .set_state(&&address, serialized.as_ref())
+            .set_state(sets)
             .map_err(|err| ApplyError::InternalError(format!("{}", err)))?;
         Ok(())
     }
@@ -355,7 +361,7 @@ impl<'a> SupplyChainState<'a> {
         property_name: &str,
     ) -> Result<Option<property::Property>, ApplyError> {
         let address = make_property_address(record_id, property_name, 0);
-        let d = self.context.get_state(&address)?;
+        let d = self.context.get_state(vec![address])?;
         match d {
             Some(packed) => {
                 let properties: property::PropertyContainer =
@@ -386,7 +392,7 @@ impl<'a> SupplyChainState<'a> {
         property: property::Property,
     ) -> Result<(), ApplyError> {
         let address = make_property_address(record_id, property_name, 0);
-        let d = self.context.get_state(&address)?;
+        let d = self.context.get_state(vec![address.clone()])?;
         let mut property_container = match d {
             Some(packed) => match protobuf::parse_from_bytes(packed.as_slice()) {
                 Ok(properties) => properties,
@@ -426,8 +432,10 @@ impl<'a> SupplyChainState<'a> {
                 )))
             }
         };
+        let mut sets = HashMap::new();
+        sets.insert(address, serialized);
         self.context
-            .set_state(&address, serialized.as_ref())
+            .set_state(sets)
             .map_err(|err| ApplyError::InternalError(format!("{}", err)))?;
         Ok(())
     }
@@ -439,7 +447,7 @@ impl<'a> SupplyChainState<'a> {
         page: u32,
     ) -> Result<Option<property::PropertyPage>, ApplyError> {
         let address = make_property_address(record_id, property_name, page);
-        let d = self.context.get_state(&address)?;
+        let d = self.context.get_state(vec![address])?;
         match d {
             Some(packed) => {
                 let property_pages: property::PropertyPageContainer =
@@ -471,7 +479,7 @@ impl<'a> SupplyChainState<'a> {
         property_page: property::PropertyPage,
     ) -> Result<(), ApplyError> {
         let address = make_property_address(record_id, property_name, page_num);
-        let d = self.context.get_state(&address)?;
+        let d = self.context.get_state(vec![address.clone()])?;
         let mut property_pages = match d {
             Some(packed) => match protobuf::parse_from_bytes(packed.as_slice()) {
                 Ok(property_pages) => property_pages,
@@ -511,8 +519,10 @@ impl<'a> SupplyChainState<'a> {
                 )))
             }
         };
+        let mut sets = HashMap::new();
+        sets.insert(address, serialized);
         self.context
-            .set_state(&address, serialized.as_ref())
+            .set_state(sets)
             .map_err(|err| ApplyError::InternalError(format!("{}", err)))?;
         Ok(())
     }
@@ -523,7 +533,7 @@ impl<'a> SupplyChainState<'a> {
         agent_id: &str,
     ) -> Result<Option<proposal::ProposalContainer>, ApplyError> {
         let address = make_proposal_address(record_id, agent_id);
-        let d = self.context.get_state(&address)?;
+        let d = self.context.get_state(vec![address])?;
         match d {
             Some(packed) => {
                 let proposals: proposal::ProposalContainer =
@@ -557,8 +567,10 @@ impl<'a> SupplyChainState<'a> {
                 )))
             }
         };
+        let mut sets = HashMap::new();
+        sets.insert(address, serialized);
         self.context
-            .set_state(&address, serialized.as_ref())
+            .set_state(sets)
             .map_err(|err| ApplyError::InternalError(format!("{}", err)))?;
         Ok(())
     }
@@ -688,6 +700,17 @@ impl SupplyChainTransactionHandler {
                     provided_name
                 )));
             };
+
+            let is_delayed = match type_schemata.get(provided_name) {
+                Some(property_schema) => property_schema.delayed,
+                None => false,
+            };
+            if is_delayed {
+                return Err(ApplyError::InvalidTransaction(format!(
+                    "Property is 'delayed', and cannot be set at record creation: {}",
+                    provided_name
+                )));
+            };
         }
         let mut new_record = record::Record::new();
         new_record.set_record_id(record_id.to_string());
@@ -715,8 +738,10 @@ impl SupplyChainTransactionHandler {
             new_property.reporters.push(reporter.clone());
             new_property.set_current_page(1);
             new_property.set_wrapped(false);
+            new_property.set_fixed(property.get_fixed());
             new_property.set_number_exponent(property.get_number_exponent());
             new_property.set_enum_options(property.enum_options);
+            new_property.set_struct_properties(property.struct_properties);
 
             state.set_property(record_id, property_name, new_property.clone())?;
 
@@ -893,6 +918,13 @@ impl SupplyChainTransactionHandler {
                 return Err(ApplyError::InvalidTransaction(format!(
                     "Reporter is not authorized: {}",
                     signer
+                )));
+            }
+
+            if prop.fixed {
+                return Err(ApplyError::InvalidTransaction(format!(
+                    "Property is fixed and cannot be updated: {}",
+                    prop.name
                 )));
             }
 
@@ -1495,11 +1527,67 @@ impl SupplyChainTransactionHandler {
                     };
                 reported_value.set_enum_value(enum_index as u32)
             }
+            property::PropertySchema_DataType::STRUCT => {
+                match self._validate_struct_values(
+                    &value.struct_values,
+                    &property.struct_properties
+                ) {
+                    Ok(_) => (),
+                    Err(e) => return Err(e),
+                }
+
+                let struct_values = RepeatedField::from_vec(value.get_struct_values().to_vec());
+                reported_value.set_struct_values(struct_values)
+            }
             property::PropertySchema_DataType::LOCATION => {
                 reported_value.set_location_value(value.get_location_value().clone())
             }
         };
         Ok(reported_value)
+    }
+
+    fn _validate_struct_values(
+        &self,
+        struct_values: &RepeatedField<property::PropertyValue>,
+        schema_values: &RepeatedField<property::PropertySchema>
+    ) -> Result<(), ApplyError> {
+        if struct_values.len() != schema_values.len() {
+            return Err(ApplyError::InvalidTransaction(format!(
+                "Provided struct does not match schema length: {:?} != {:?}",
+                struct_values.len(),
+                schema_values.len(),
+            )))
+        }
+
+        for schema in schema_values.iter() {
+            let value = match struct_values.iter().find(|val| val.name == schema.name) {
+                Some(val) => val,
+                None => return Err(ApplyError::InvalidTransaction(format!(
+                    "Provided struct missing required property from schema: {}",
+                    schema.name,
+                )))
+            };
+
+            if value.data_type != schema.data_type {
+                return Err(ApplyError::InvalidTransaction(format!(
+                    "Struct property \"{}\" must have data type: {:?}",
+                    schema.name,
+                    schema.data_type,
+                )))
+            }
+
+            if schema.data_type == property::PropertySchema_DataType::STRUCT {
+                match self._validate_struct_values(
+                    &value.struct_values,
+                    &schema.struct_properties
+                ) {
+                    Ok(_) => (),
+                    Err(e) => return Err(e),
+                }
+            }
+        }
+
+        Ok(())
     }
 }
 
